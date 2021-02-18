@@ -32,7 +32,7 @@ function body(lines) {
 		if (line.trim().startsWith(SYMBOL.parameters))
 			continue
 		if (line.trim().startsWith(SYMBOL.script)) {
-			tpl.push(line.slice(1))
+			tpl.push(line.replace(SYMBOL.script, ''))
 		} else {
 			tpl.push('html.push(`' + line + '`)')
 		}
