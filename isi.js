@@ -10,14 +10,18 @@ export default function isi(template) {
 	let lines = template.split('\r\n').flatMap(x => x.split('\r')).flatMap(x => x.split('\n')) // all types of line-delimiters
 	return new Function(...header(lines).p, body(lines).join('\n'))
 }
-
+export function debug(template) {
+	let lines = template.split('\r\n').flatMap(x => x.split('\r')).flatMap(x => x.split('\n')) // all types of line-delimiters
+	console.log('\n\n!!! parameters\n', header(lines))
+	console.log('\n\n!!! body\n', body(lines))
+}
 
 function header(lines) {
 	let firstLine = lines.filter(x => x.trim().startsWith(SYMBOL.parameters))[0]?.trim()
 	let p = ['x']
 	if (firstLine)
 		p = firstLine.slice(2).split(',').map(x => x.trim())
-	console.log('p', p)
+	// console.log('p', p)
 	return { p }
 }
 
