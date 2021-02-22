@@ -10,12 +10,12 @@ const SYMBOL = {
 	script: '!',
 	parameters: '!!',
 }
-
-export default function template(template, p = {}) {
+export default template
+export function template(template, p = {}) {
 	let lines = template.split('\r\n').flatMap(x => x.split('\r')).flatMap(x => x.split('\n')) // all types of line-delimiters
 	let h = header(lines)
 	let b = body(lines)
-	if(p.debug) console.log('\n\n!!! parameters\n', header(lines),'\n\n!!! body\n', body(lines))
+	if (p.debug) console.log('\n\n!!! parameters\n', header(lines), '\n\n!!! body\n', body(lines))
 	return new Function(...h.p, b.join('\n'))
 }
 
