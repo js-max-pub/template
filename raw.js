@@ -11,7 +11,7 @@ const SYMBOL = {
 	parameters: '!!',
 }
 
-export default function isi(template, p = {}) {
+export default function template(template, p = {}) {
 	let lines = template.split('\r\n').flatMap(x => x.split('\r')).flatMap(x => x.split('\n')) // all types of line-delimiters
 	let h = header(lines)
 	let b = body(lines)
