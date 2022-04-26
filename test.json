@@ -1,0 +1,12 @@
+{
+	"test2.isi.md": "# ${x.person.name}\n\n### Phone Numbers\n! for(let number of x.person.phone){\n\t* ${number}\n! }\t",
+	"test2.result.md": "# John Doe\n\n### Phone Numbers\n\t* 12345\n\t* 345678",
+	"inject.css": "a{text-decoration: none;}\na:hover{color: red;}",
+	"test1.isi.js": "function anonymous(person\n) {\nlet html = []\nhtml.push(``)\nhtml.push(`<style>a{text-decoration: none;}\na:hover{color: red;}</style>`)\nhtml.push(`bla bla text`)\nhtml.push(`<script>let x = 1 + 2</script>`)\nhtml.push(``)\nhtml.push(`<h1>${person.name}</h1>`)\nhtml.push(`<ul>`)\nfor (let number of person.phone) {\nhtml.push(`\t\t<li>${number}</li>`)\n}\nhtml.push(`</ul>`)\nreturn html.join('\\n')\n}",
+	"inject.txt": "bla bla text",
+	"person.json": "{\n\t\"name\": \"John Doe\",\n\t\"phone\": [\n\t\t12345,\n\t\t345678\n\t]\n}",
+	"test1.isi.html": "!! person\n\n!css> inject.css \n!> text1\n!js> inject.js\n\n<h1>${person.name}</h1>\n<ul>\n\t! for (let number of person.phone) {\n\t\t<li>${number}</li>\n\t! }\n</ul>",
+	"inject.js": "let x = 1 + 2",
+	"test2.isi.js": "function anonymous(x\n) {\nlet html = []\nhtml.push(`# ${x.person.name}`)\nhtml.push(``)\nhtml.push(`### Phone Numbers`)\nfor(let number of x.person.phone){\nhtml.push(`\t* ${number}`)\n}\nreturn html.join('\\n')\n}",
+	"test1.result.html": "\n<style>a{text-decoration: none;}\na:hover{color: red;}</style>\nbla bla text\n<script>let x = 1 + 2</script>\n\n<h1>John Doe</h1>\n<ul>\n\t\t<li>12345</li>\n\t\t<li>345678</li>\n</ul>"
+}

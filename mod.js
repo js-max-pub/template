@@ -11,9 +11,10 @@ const SYMBOL = {
 	script: '!',
 	parameters: '!!',
 	// injection: '!>',
-	injection: /\!(css|js|)\>(.*)/,
+	injection: /\!(css|js|json|)\>(.*)/,
 }
 const TYPES = {
+	json: 'script',
 	js: 'script',
 	css: 'style',
 }
@@ -47,11 +48,11 @@ function body(lines, injections) {
 		if (injection) {
 			let [x, type, key] = injection
 			// console.log('inj',injections)
-
 			// console.log('xxx',type,key)
 			let inj = (injections[key.trim()] ?? '')
+			if (inj && type == 'json') inj = 'const ' + an(key) + ' = ' + inj
 			let text = type
-				? `<${TYPES[type]}>${inj}</${TYPES[type]}>`
+				? `<${TYPES[type]} ${type=='js'?`type='module'`:''}>${inj}</${TYPES[type]}>`
 				: inj
 			// console.log("TExty",text)
 			tpl.push('html.push(`' + text + '`)')
@@ -74,6 +75,22 @@ function body(lines, injections) {
 // 	// writable: false
 // });
 
-export function importable(func) {
-	return func.toString().replace('function anonymous', 'export default function')
+const an = s => s.replaceAll(/[^a-z0-9]/gi, '_')
+
+export function importable(func, fname) {
+	let fdec = 'export default function'
+	if (fname)
+		fdec = 'export function ' + an(fname)
+	return func.toString().replace('function anonymous', fdec)
+}
+
+export function build(dict) {
+	let templates = []
+	for (let [path, text] of Object.entries(dict)) {
+		// if (!path.includes('.templite.')) continue
+		if (!text.trim().startsWith(SYMBOL.parameters)) continue
+		console.log('templite', path)
+		templates.push(importable(template(text, { injections: dict }), path.replace('.templite.', '.')))
+	}
+	return templates
 }
