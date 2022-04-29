@@ -16,6 +16,7 @@ const SYMBOL = {
 const TYPES = {
 	json: 'script',
 	js: 'script',
+	mjs: 'script',
 	css: 'style',
 }
 export default template
@@ -48,13 +49,13 @@ function body(lines, injections) {
 		if (injection) {
 			let [x, type, key] = injection
 			// console.log('inj',injections)
-			// console.log('xxx',type,key)
+			console.log('xxx',type,key)
 			let inj = (injections[key.trim()] ?? '')
 			if (inj && type == 'json') inj = 'const ' + an(key) + ' = ' + inj
 			let text = type
-				? `<${TYPES[type]} ${type=='js'?`type='module'`:''}>${inj}</${TYPES[type]}>`
+				? `<${TYPES[type]} ${type=='mjs'?`type='module'`:''}>${inj}</${TYPES[type]}>`
 				: inj
-			// console.log("TExty",text)
+			console.log("TExty",text)
 			tpl.push('html.push(`' + text + '`)')
 		} else if (line.trim().startsWith(SYMBOL.script)) {
 			tpl.push(line.replace(SYMBOL.script, '').trim())
