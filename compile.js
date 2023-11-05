@@ -5,7 +5,7 @@ let source = FS.folder(Deno.args[0] ?? './')
 let target = FS.file(Deno.args[1] ?? './.templates.js')
 
 let dict = source.load()
-FS.file('test.json').json = dict
+FS.file('test/test.json').json = dict
 // let dict = Object.fromEntries(
 // 	source.deepList
 // 		.filter(x => x.type == 'file')

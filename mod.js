@@ -5,7 +5,7 @@
 // add support to call other templates like so:
 // 	!> ./report.room.html(match.locations.room)
 
-import { lines } from '../string/mod.js'
+import { lines } from '../std/string.js'
 
 const SYMBOL = {
 	script: '!',
@@ -19,23 +19,45 @@ const TYPES = {
 	mjs: 'script',
 	css: 'style',
 }
+
 export default template
-export function template(template, p = {}) {
+
+export function template(template, x = {}) {
 	let l = lines(template)
 	// let lines = template.split('\r\n').flatMap(x => x.split('\r')).flatMap(x => x.split('\n')) // all types of line-delimiters
-	let h = header(l)
-	let b = body(l, p.injections)
-	if (p.debug) console.log('\n\n!!! parameters\n', header(l), '\n\n!!! body\n', body(l, p.injections))
-	return new Function(...h.p, b.join('\n'))
+	// let h = header(l)
+	let p = parameters(l)
+	// console.log('p',p)
+	let b = body(l, x.injections).join('\n')
+	// console.log('b',b)
+	// b = `let ${h} = arguments${h.startsWith('{') ? '[0]' : ''}\n` + b
+	// if (p.debug) console.log('\n\n!!! parameters\n', header(l), '\n\n!!! body\n', body(l, p.injections))
+	// return new Function(...h.p, b.join('\n'))
+	// return new Function()
+	// console.log('---',b,'---')
+	try {
+		return new Function(p,b)
+	} catch {
+		console.error("ERROR:", b)
+	}
+	// return  Function(`let a = 1;`)
+	return Function()
 }
-
-function header(lines) {
-	let p = ['x']
-	let firstLine = lines.filter(x => x.trim().startsWith(SYMBOL.parameters))[0]?.trim()
-	if (firstLine)
-		p = firstLine.slice(2).split(',').map(x => x.trim())
-	// console.log('p', p)
-	return { p }
+// function parameters
+// function header(lines) {
+// 	let p = ['x']
+// 	let firstLine = lines.filter(x => x.trim().startsWith(SYMBOL.parameters))[0]?.trim()
+// 	if (firstLine)
+// 		// p = firstLine.slice(2).split(',').map(x => x.trim())
+// 		p = firstLine.slice(2).trim()
+// 	if (!firstLine.startsWith('{'))
+// 		firstLine = '[' + firstLine + ']'
+// 	// console.log('p', p)
+// 	return p
+// 	// return { p }
+// }
+function parameters(lines) {
+	return lines.map(x => x.trim()).filter(x => x.startsWith(SYMBOL.parameters))[0]?.slice(SYMBOL.parameters.length)?.trim()
 }
 
 function body(lines, injections) {
@@ -47,13 +69,15 @@ function body(lines, injections) {
 			continue
 		let injection = line.trim().match(SYMBOL.injection)
 		if (injection) {
+			// console.log('injection',injection)
 			let [x, type, key] = injection
-			// console.log('inj',injections)
-			// console.log('xxx',type,key)
+			// key = key.trim()
+			// console.log('inj',Object.keys(injections))
 			let inj = (injections[key.trim()] ?? '')
+			console.log('xxx',type,':'+key.trim()+':',inj)
 			if (inj && type == 'json') inj = 'const ' + an(key) + ' = ' + inj
 			let text = type
-				? `<${TYPES[type]} ${type=='mjs'?`type='module'`:''}>${inj}</${TYPES[type]}>`
+				? `<${TYPES[type]} ${type == 'mjs' ? `type='module'` : ''}>\n${inj}\n</${TYPES[type]}>`
 				: inj
 			// console.log("TExty",text)
 			tpl.push('html.push(`' + text + '`)')
