@@ -5,7 +5,8 @@
 // add support to call other templates like so:
 // 	!> ./report.room.html(match.locations.room)
 
-import { lines } from '../std/string.js'
+// import { lines } from '../std/string.js'
+import { lines } from 'https://jsv.max.pub/std/2023-11/string.js'
 
 const SYMBOL = {
 	script: '!',
